@@ -1,17 +1,6 @@
-# Virtual environment
-.venv/
-venv/
-env/
-
-# Environment variables
-.env
-
-# Python cache
+.cache
+data/users.pkl
+.venv
 __pycache__/
 *.pyc
-
-# OS files
-.DS_Store
-
-# Logs
-*.log
+.env
