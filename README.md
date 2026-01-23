@@ -1,70 +1,246 @@
-# Getting Started with Create React App
+# Safe-and-Sound Podcast Recommender 🎧
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A production-style podcast recommendation system that integrates **Spotify data**, prioritizes **safety**, **fairness/diversity**, and **explainability**, and exposes recommendations through a **Flask REST API** with a **React frontend UI**.
 
-## Available Scripts
+This project demonstrates:
+- Real-time ingestion from the **Spotify Web API**
+- Content-based recommendation with embedding + TF-IDF fallback
+- Safety scoring and filtering
+- Multi-signal ranking (similarity, recency, popularity, safety)
+- Diversity re-ranking using MMR
+- A full backend + frontend system
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## Tech Stack
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Backend
+- Python 3.12
+- Flask
+- Spotify Web API (spotipy)
+- scikit-learn
+- numpy, pandas
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Frontend
+- React (Vite)
+- JavaScript / JSX
+- Fetch-based REST API integration
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Repository Structure
 
-### `npm run build`
+safe_sound_recs/
+api.py
+recommender.py
+requirements.txt
+.env.example
+data/
+models/
+podcast-ui/
+package.json
+src/
+vite.config.*
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+yaml
+Copy code
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Prerequisites
 
-### `npm run eject`
+- Python 3.12
+- Node.js 18 or newer
+- Spotify Developer Account
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Create a Spotify app and obtain:
+- SPOTIFY_CLIENT_ID
+- SPOTIFY_CLIENT_SECRET
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Backend Setup
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### 1. Create Virtual Environment
 
-## Learn More
+From the repository root:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```powershell
+py -3.12 -m venv .venv
+.\.venv\Scripts\activate
+2. Install Dependencies
+powershell
+Copy code
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+3. Create Environment Variables
+Create a file named .env in the repository root:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+env
+Copy code
+SPOTIFY_CLIENT_ID=your_spotify_client_id
+SPOTIFY_CLIENT_SECRET=your_spotify_client_secret
+Running the Backend
+Start API Server
+powershell
+Copy code
+python api.py
+Backend runs at:
 
-### Code Splitting
+http://127.0.0.1:5000
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Test Health Endpoint
+Open in browser:
 
-### Analyzing the Bundle Size
+arduino
+Copy code
+http://127.0.0.1:5000/health
+Response:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+json
+Copy code
+{ "status": "ok" }
+Backend API Endpoints
+Method	Endpoint	Description
+GET	/health	Health check
+POST	/users	Create new user
+GET	/users/<user_id>	Get user info
+PUT	/users/<user_id>/interests	Update interests
+GET	/recommendations/<user_id>	Get recommendations
+POST	/feedback/<user_id>	Submit feedback
+GET	/episodes	List episodes
+GET	/episodes/<episode_id>	Episode details
+GET	/search?q=...	Search episodes
+POST	/evaluate	Evaluate recommender
+GET	/stats	System statistics
 
-### Making a Progressive Web App
+Running the Recommender Demo (CLI)
+powershell
+Copy code
+python recommender.py
+This:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Loads Spotify episodes
 
-### Advanced Configuration
+Builds embeddings
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Computes safety scores
 
-### Deployment
+Runs ranking and diversity re-ranking
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Prints top recommendations in terminal
 
-### `npm run build` fails to minify
+Frontend Setup
+Open a new terminal while backend is running.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+1. Go to Frontend Folder
+powershell
+Copy code
+cd podcast-ui
+2. Install Frontend Dependencies
+powershell
+Copy code
+npm install
+3. Configure API URL
+Create .env inside podcast-ui/:
+
+env
+Copy code
+VITE_API_BASE_URL=http://127.0.0.1:5000
+4. Start Frontend
+powershell
+Copy code
+npm run dev
+Frontend runs at:
+
+http://localhost:5173
+
+Running Full System Together
+Terminal 1 — Backend
+powershell
+Copy code
+cd safe_sound_recs
+.\.venv\Scripts\activate
+python api.py
+Terminal 2 — Frontend
+powershell
+Copy code
+cd safe_sound_recs\podcast-ui
+npm install
+npm run dev
+Open:
+
+http://localhost:5173
+
+Recommendation Pipeline
+Spotify episode ingestion
+
+Text embedding (SentenceTransformer or TF-IDF fallback)
+
+Safety scoring (toxicity + misinformation heuristic)
+
+Candidate generation (cosine similarity)
+
+Ranking using weighted signals
+
+Diversity re-ranking using MMR
+
+Explanation generation
+
+Safety & Fairness
+Safety scores computed per episode
+
+Unsafe episodes filtered before ranking
+
+Diversity enforced using Maximal Marginal Relevance
+
+Small creators boosted by popularity normalization
+
+Data Persistence
+Users stored in: data/users.pkl
+
+Episodes loaded dynamically from Spotify
+
+Embeddings computed at runtime
+
+Git Ignore (Required)
+Your .gitignore must contain:
+
+bash
+Copy code
+.venv/
+.env
+.cache/
+__pycache__/
+data/users.pkl
+podcast-ui/node_modules/
+podcast-ui/dist/
+Viewing the Project
+Backend API: http://127.0.0.1:5000/health
+
+Frontend UI: http://localhost:5173
+
+License
+MIT License
+
+markdown
+Copy code
+
+---
+
+Hari — **this is now a real full-stack ML system**:
+
+- Spotify API ✔  
+- Recommender ✔  
+- Safety + fairness ✔  
+- Flask API ✔  
+- React UI ✔  
+
+This is **excellent portfolio material** for Spotify, ML roles, and backend + applied ML interviews.
+
+If you want next, I can help you with:
+- Final GitHub repo cleanup  
+- Screenshots / demo instructions  
+- Resume bullet points  
+- How to describe this to Spotify recruiters  
+- Deploying this on Render / Fly.io / AWS
