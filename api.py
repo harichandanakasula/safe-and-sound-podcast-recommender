@@ -477,5 +477,23 @@ if __name__ == '__main__':
     print("GET    /health                   - Health check")
     print("="*80)
     
+    
+    # Run server
+    if __name__ == '__main__':
+        print("Starting Safe-and-Sound API Server...")
+        print("="*80)
+        
+        # Initialize recommender
+        init_recommender()
+        
+        print("\n" + "="*80)
+        print("API ENDPOINTS:")
+        print("="*80)
+        print("POST   /users                    - Create new user")
+        print("GET    /users/<user_id>          - Get user info")
+        # ... more prints ...
+        print("="*80)
+    
     # Run server
     app.run(debug=True, host='0.0.0.0', port=5000)
+    
